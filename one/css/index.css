@@ -1,0 +1,50 @@
+.index_title{
+	line-height: 44px;
+}
+.index_search,.index_add{
+	float: right;
+}
+.index_title .index_add{
+	font-size: 35px;
+	padding: 0;
+	line-height: 44px;
+}
+.index_content>.mui-table-view:first-child{
+	margin-top: 0;
+}
+.left,.information,.head_img,.time{
+	float: left;
+}
+.left{
+	width: 85%;
+}
+.time{
+	width: 15%;
+}
+/*.head_img,.time{
+	width: 15%;
+}*/
+.head_img{
+	width: 20%;
+	height: 50px;
+	background-image: url(../img/images.jpg);
+	background-size: contain;
+	background-repeat: no-repeat;
+	
+}
+.information{
+	width: 80%;
+	padding:5px 10px;
+}
+/*.head_img>img{
+	width: 100%;
+}*/
+.name,.text{
+	display: block;
+}
+.text{
+	width: 100%;
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}
