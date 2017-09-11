@@ -1,57 +1,119 @@
 <!DOCTYPE html>
 <html>
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
-    <title></title>
-    <script src="js/mui.min.js"></script>
-    <link href="css/mui.min.css" rel="stylesheet"/>
-    <link rel="stylesheet" type="text/css" href="css/index.css"/>
-    <script type="text/javascript" charset="utf-8">
-      	mui.init();
-    </script>
-</head>
-<body>
-	<header class="index_title mui-bar mui-bar-nav">
-	    <span class="index_title">H5微信</span>
-	    <span class="index_add mui-icon mui-icon-plusempty"></span>
-	    <span class="index_search mui-icon mui-icon-search"></span>
-	</header>
-	<nav class="mui-bar mui-bar-tab">
-	    <a class="mui-tab-item mui-active">
-	        <span class="mui-icon mui-icon-weixin"></span>
-	        <span class="mui-tab-label">微信</span>
-	    </a>
-	    <a class="mui-tab-item">
-	        <span class="mui-icon mui-icon-person"></span>
-	        <span class="mui-tab-label">通讯录</span>
-	    </a>
-	    <a class="mui-tab-item">
-	        <span class="mui-icon mui-icon-email"></span>
-	        <span class="mui-tab-label">发现</span>
-	    </a>
-	    <a class="mui-tab-item">
-	        <span class="mui-icon mui-icon-gear"></span>
-	        <span class="mui-tab-label">我</span>
-	    </a>
-	</nav>
-	<div class="index_content mui-content">
-		<ul class="mui-table-view">
-		    <li class="mui-table-view-cell mui-clearfix">
-		    	<div class="left mui-clearfix">
-			    	<div class="head_img">
-			    		<!--<img src="img/images.jpg"/>-->
-			    	</div>
-			    	<div class="information">
-			    		<span class="name">小庄咯</span>
-			    		<span class="text">喜欢大海的你，一次让你玩个够</span>
-			    	</div>
-		    	</div>
-		    	<div class="time">20:52</div>
-		    </li>
-		    <!--<li class="mui-table-view-cell">Item 2</li>
-		    <li class="mui-table-view-cell">Item 3</li>-->
-		</ul>
-	</div>
-</body>
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title></title>
+		<script src="js/mui.min.js"></script>
+		<link href="css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" type="text/css" href="css/index.css" />
+	</head>
+
+	<body>
+		<header class="index_title mui-bar mui-bar-nav">
+			<span class="index_title">Hi</span>
+			<span class="index_add mui-icon mui-icon-plusempty"></span>
+			<span class="index_search mui-icon mui-icon-search"></span>
+		</header>
+		<nav class="mui-bar mui-bar-tab" id="show_main_tab">
+			<a class="mui-tab-item mui-active" data-index='0'>
+				<span class="mui-icon mui-icon-weixin"></span>
+				<span class="mui-tab-label">微信</span>
+			</a>
+			<a class="mui-tab-item" data-index='1'>
+				<span class="mui-icon mui-icon-person"></span>
+				<span class="mui-tab-label">通讯录</span>
+			</a>
+			<a class="mui-tab-item" data-index='2'>
+				<span class="mui-icon mui-icon-email"></span>
+				<span class="mui-tab-label">发现</span>
+			</a>
+			<a class="mui-tab-item" data-index='3'>
+				<span class="mui-icon mui-icon-gear"></span>
+				<span class="mui-tab-label">我</span>
+			</a>
+		</nav>
+		<div class="index_content mui-content">
+			<div class="mui-scroll-wrapper" style="top: 44px;bottom: 50px;">
+				<div class="mui-scroll">
+					<!--这里放置真实显示的DOM内容-->
+					<div class="mui-slider" id="content_slider">
+						<div class="mui-slider-group">
+							<!--第一个内容区容器-->
+							<div class="mui-slider-item content_wrap">
+								<!-- 具体内容 -->
+								<ul class="mui-table-view">
+									<li class="mui-table-view-cell mui-clearfix go_chat">
+										<div class="left mui-clearfix">
+											<div class="head_img">
+
+											</div>
+											<div class="information">
+												<span class="name">小庄咯</span>
+												<span class="text">喜欢大海的你，一次让你玩个够</span>
+											</div>
+										</div>
+										<div class="time">20:52</div>
+									</li>
+								</ul>
+							</div>
+							<!--第二个内容区-->
+							<div class="mui-slider-item content_wrap">
+								<!-- 具体内容 -->
+								<ul class="mui-table-view">
+									<li class="mui-table-view-cell mui-clearfix">
+										<div class="left mui-clearfix">
+											<div class="head_img">
+
+											</div>
+											<div class="information">
+												<span class="name">小qiu咯</span>
+												<span class="text">喜欢你，bujieshi</span>
+											</div>
+										</div>
+										<div class="time">20:52</div>
+									</li>
+								</ul>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+		</div>
+
+	</body>
+	<script type="text/javascript" src="js/jquery-1.8.0.min.js"></script>
+	<script type="text/javascript" charset="utf-8">
+		mui.init();
+		mui('.mui-scroll-wrapper').scroll({
+			deceleration: 0.0006
+		})
+		/*通过滑动页面切换tab*/
+		document.querySelector('.mui-slider').addEventListener('slide', function(event) {
+			//注意slideNumber是从0开始的；
+			var i = event.detail.slideNumber;
+			console.log(event.detail.slideNumber);
+			$("#show_main_tab").find('.mui-tab-item').removeClass('mui-active').eq(i).addClass('mui-active');
+		});
+		/*通过点击tab切换页面*/
+		$("#show_main_tab").on('tap', '.mui-tab-item', function() {
+			//			$(".mui-tab-item").removeClass('mui-active');
+			//			$(this).addClass('mui-active');
+			var index = $(this).attr('data-index');
+			//获得slider插件对象
+			var gallery = mui('#content_slider');
+			gallery.slider().gotoItem(index); //跳转到第index张图片，index从0开始；
+
+		})
+		/*跳转至聊天窗口*/
+		$('body').on('tap','.go_chat',function(){
+			
+		})
+		mui.plusReady(function() {
+			console.log("当前页面URL：" + plus.webview.currentWebview().getURL());
+		});
+	</script>
+
 </html>

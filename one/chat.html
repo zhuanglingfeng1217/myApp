@@ -1,0 +1,53 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="css/mui.min.css" rel="stylesheet" />
+		<style type="text/css">
+			.right_icon {
+				float: right;
+			}
+			
+			.mui-bar .record {
+				border: 1px solid #333333;
+				width: 30px;
+				height: 30px;
+				border-radius: 50%;
+				padding: 0;
+				margin-left: 10px;
+				margin-top: 10px;
+				text-align: center;
+				padding-top: 2px;
+			}
+			
+			#user_text {
+				width: 65%;
+				border: none;
+				border-bottom: 1px solid #ccc;
+			}
+			#user_text:focus{
+				border-bottom: 1px solid lawngreen;
+			}
+		</style>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav mui-clearfix">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			<h1 class="mui-title">chat</h1>
+			<span class="mui-icon mui-icon-person right_icon"></span>
+		</header>
+		<nav class="mui-bar mui-bar-tab">
+			<span class="record mui-icon mui-icon-mic"></span>
+			<input type="text" id="user_text" style="" />
+		</nav>
+		<script src="js/mui.min.js"></script>
+		<script type="text/javascript">
+			mui.init()
+		</script>
+	</body>
+
+</html>
