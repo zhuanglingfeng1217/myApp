@@ -7,6 +7,12 @@
 		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
 		<link href="css/mui.min.css" rel="stylesheet" />
 		<style type="text/css">
+			* {
+				box-sizing: border-box;
+				padding: 0;
+				margin: 0;
+			}
+			
 			.right_icon {
 				float: right;
 			}
@@ -24,12 +30,58 @@
 			}
 			
 			#user_text {
-				width: 65%;
+				width: 75%;
 				border: none;
 				border-bottom: 1px solid #ccc;
+				-webkit-user-select: none;
+				-moz-user-select: none;
+				-ms-user-select: none;
 			}
-			#user_text:focus{
+			
+			#user_text:focus {
 				border-bottom: 1px solid lawngreen;
+			}
+			
+			.mic_box,
+			.plus_box {
+				display: inline-block;
+				width: 12.5%;
+			}
+			
+			.left_text {
+				float: left;
+				width: 80%;
+				margin-bottom: 5px;
+			}
+			
+			.right_text {
+				float: right;
+				width: 80%;
+				margin-bottom: 5px;
+			}
+			
+			.head_img {
+				width: 15%;
+			}
+			
+			.head_img>img {
+				width: 40px;
+			}
+			
+			.left_text .head_img,
+			.left_text .user_msg {
+				float: left;
+				/*text-align: left;*/
+			}
+			
+			.user_msg {
+				max-width: 80%;
+			}
+			
+			.right_text .head_img,
+			.right_text .user_msg {
+				float: right;
+				/*text-align: right;*/
 			}
 		</style>
 	</head>
@@ -40,13 +92,116 @@
 			<h1 class="mui-title">chat</h1>
 			<span class="mui-icon mui-icon-person right_icon"></span>
 		</header>
-		<nav class="mui-bar mui-bar-tab">
-			<span class="record mui-icon mui-icon-mic"></span>
-			<input type="text" id="user_text" style="" />
+		<nav class="mui-bar mui-bar-tab" style="height: 40px;">
+			<div class="mic_box">
+				<span class="record mui-icon mui-icon-mic"></span>
+			</div>
+
+			<input type="text" id="user_text" />
+			<div class="plus_box">
+				<span class="mui-icon mui-icon-plus add_file" style="font-size: 35px;"></span>
+				<span class="send" style="display: none;">发送</span>
+			</div>
+
 		</nav>
+		<div class="mui-content">
+			<ul class="mui-table-view mui-clearfix msg_box">
+				<li class="left_text mui-clearfix">
+					<div class="head_img">
+						<img src="img/images2.jpg" />
+					</div>
+					<div class="user_msg">
+						<span>nihao李径独来数李径独来数李径独来数李径独来数李径独来数李径独来数</span>
+					</div>
+				</li>
+				<li class="right_text">
+					<div class="head_img">
+						<img src="img/images2.jpg" />
+					</div>
+					<div class="user_msg">
+						<span>nihao李径独来数李径独来数李径独来数李径独来数李径独来数李径独来数</span>
+					</div>
+				</li>
+			</ul>
+		</div>
 		<script src="js/mui.min.js"></script>
+		<script src="js/jquery-1.8.0.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="js/template.js" type="text/javascript" charset="utf-8"></script>
+		<!--消息模板-->
+		<script type="text/javascript" id="msgList">
+			<li class="right_text">
+				<div class="head_img">
+					<img src="img/images2.jpg"/>
+				</div>
+				<div class="user_msg">
+					<span>{{msg}}</span>
+				</div>
+			</li>
+		</script>
 		<script type="text/javascript">
-			mui.init()
+			mui.init({
+				gestureConfig: {
+					tap: true, //默认为true
+					doubletap: true, //默认为false
+					longtap: true, //默认为false
+					swipe: true, //默认为true
+					drag: true, //默认为true
+					hold: false, //默认为false，不监听
+					release: false //默认为false，不监听
+				}
+			});
+			/*监听输入框*/
+			$('#user_text').on('input', function() {
+				if($("#user_text").val()) {
+					$('.add_file').hide();
+					$('.send').show();
+				} else {
+					$('.add_file').show();
+					$('.send').hide();
+				}
+			})
+			/*发送*/
+			$('.send').on('tap', function() {
+				var msg = $('#user_text').val();
+				var data = {
+					msg: msg
+				};
+				var html = template('msgList', data);
+				$('.msg_box').append(html);
+				$('#user_text').val('');
+				$('.add_file').show();
+				$('.send').hide();
+			})
+			/*长按录音*/
+			$('.record').on('longtap', function(e) {
+				//				mui.alert('长按了');
+				e.preventDefault();
+				startRecord();
+			})
+			document.addEventListener('plusready', onPlusReady, false);
+			var r = null;
+
+			function onPlusReady() {
+				r = plus.audio.getRecorder();
+			}
+
+			function startRecord() {
+				if(r == null) {
+					mui.alert("Device not ready!");
+					return;
+				}
+				r.record({
+					filename: "_doc/audio/"
+				}, function() {
+					mui.alert("Audio record success!");
+				}, function(e) {
+					mui.alert("Audio record failed: " + e.message);
+				});
+			}
+
+			function stopRecord() {
+				r.stop();
+			}
 		</script>
 	</body>
 

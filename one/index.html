@@ -108,12 +108,15 @@
 
 		})
 		/*跳转至聊天窗口*/
-		$('body').on('tap','.go_chat',function(){
-			
-		})
-		mui.plusReady(function() {
-			console.log("当前页面URL：" + plus.webview.currentWebview().getURL());
-		});
+		$('body').on('tap', '.go_chat', function() {
+					mui.openWindow({
+						url: 'chat.html',
+						id: 'chat.html',
+					})
+			})
+//					mui.plusReady(function() {
+//						console.log("当前页面URL：" + plus.webview.currentWebview().getURL());
+//					});
 	</script>
 
 </html>
