@@ -83,6 +83,16 @@
 				float: right;
 				/*text-align: right;*/
 			}
+			
+			.right_text .playAudio {
+				display: inline-block;
+				width: 40px;
+				height: 40px;
+				background-image: url(img/bg_record_icon.png);
+				background-repeat: no-repeat;
+				background-size: contain;
+				background-position: 0 4px;
+			}
 		</style>
 	</head>
 
@@ -122,14 +132,22 @@
 						<span>nihao李径独来数李径独来数李径独来数李径独来数李径独来数李径独来数</span>
 					</div>
 				</li>
+				<!--<li class="right_text">
+					<div class="head_img">
+						<img src="img/images2.jpg" />
+					</div>
+					<div class="user_msg">
+						<span class="playAudio">1234</span>
+					</div>
+				</li>-->
 			</ul>
 		</div>
 		<script src="js/mui.min.js"></script>
 		<script src="js/jquery-1.8.0.min.js" type="text/javascript" charset="utf-8"></script>
-		<script src="js/mui.previewimage.js" type="text/javascript" charset="utf-8"></script>
+		<!--<script src="js/mui.previewimage.js" type="text/javascript" charset="utf-8"></script>-->
 		<script src="js/template.js" type="text/javascript" charset="utf-8"></script>
 		<!--消息模板-->
-		<script type="text/javascript" id="msgList">
+		<!--<script type="text/javascript" id="msgList">
 			<li class="right_text">
 				<div class="head_img">
 					<img src="img/images2.jpg"/>
@@ -138,7 +156,7 @@
 					<span>{{msg}}</span>
 				</div>
 			</li>
-		</script>
+		</script>-->
 		<script type="text/javascript">
 			mui.init({
 				gestureConfig: {
@@ -152,6 +170,7 @@
 				}
 			});
 			var r = null;
+			/*播放录音文件*/
 			$('body').on('tap', '.playAudio', function() {
 				var url = $(this).attr('data-url');
 				startPlay(url);
@@ -163,7 +182,8 @@
 					mui.toast("播放失败" + p);
 				}
 				// 切换到听筒线路
-				p.setRoute(plus.audio.ROUTE_EARPIECE);
+				//				p.setRoute(plus.audio.ROUTE_EARPIECE);
+				p.setRoute(plus.audio.ROUTE_SPEAKER);
 				p.play(function() {
 					mui.toast('播放中');
 				}, function(e) {
@@ -186,8 +206,15 @@
 						mui.toast('录音完成' + p);
 						plus.io.resolveLocalFileSystemURL(p, function(entry) {
 							mui.toast('读取文件成功');
-							$(".msg_box").append('<li class="playAudio" data-url=' + p + '>播放</li>');
-
+							var li = '<li class="right_text">' +
+								'<div class="head_img">' +
+								'<img src="img/images2.jpg"/>' +
+								'</div>' +
+								'<div class="user_msg">' +
+								'<span class="playAudio" data-url=' + p + '></span>' +
+								'</div>' +
+								'</li>'
+							$(".msg_box").append(li);
 						}, function(e) {
 							mui.alert('读取录音文件错误');
 						})
@@ -199,23 +226,25 @@
 					mui.toast('停止录音');
 				});
 				/*打开相册或摄像头*/
-				$(".add_file").on('tap',function(){
+				$(".add_file").on('tap', function() {
 					var cmr = plus.camera.getCamera();
 					var res = cmr.supportedImageResolutions[0];
 					var fmt = cmr.supportedImageFormats[0];
-					console.log("Resolution: "+res+", Format: "+fmt);
-					cmr.captureImage(function(p){
-						mui.alert( "Capture image success: " + p );
-						plus.io.resolveLocalFileSystemURL(p, function(entry){
-							
-						},function(error){
+					console.log("Resolution: " + res + ", Format: " + fmt);
+					cmr.captureImage(function(p) {
+						mui.alert("Capture image success: " + p);
+						plus.io.resolveLocalFileSystemURL(p, function(entry) {
+
+						}, function(error) {
 							mui.alert(error.message);
 						});
-						$(".msg_box").append('<li><img width="55px" src="http://localhost:13131/'+p+'" data-preview-src="" data-preview-group="1" /></li>');
-						mui.previewImage();
-					},function(error){
-						mui.alert( "Capture image failed: " + error.message );
-					},{resolution:res,format:fmt});
+						$(".msg_box").append('<li><img width="55px" src="http://localhost:13131/' + p + '" data-preview-src="" data-preview-group="1" /></li>');
+					}, function(error) {
+						mui.alert("Capture image failed: " + error.message);
+					}, {
+						resolution: res,
+						format: fmt
+					});
 				});
 			})
 			/*监听输入框*/
@@ -240,7 +269,6 @@
 				$('.add_file').show();
 				$('.send').hide();
 			})
-
 		</script>
 	</body>
 

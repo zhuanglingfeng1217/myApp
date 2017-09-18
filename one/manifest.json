@@ -216,7 +216,8 @@
 					"js/jquery-1.8.0.min.js",
 					"fonts/mui.ttf",
 					"css/mui.min.css",
-					"js/mui.previewimage.js"
+					"js/mui.previewimage.js",
+					"img/bg_record_icon.png"
 				],
 				"refer": [],
 				"priority": 0
