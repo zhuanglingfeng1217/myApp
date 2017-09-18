@@ -199,7 +199,9 @@
 					"img/images.jpg",
 					"js/jquery-1.8.0.min.js",
 					"fonts/mui.ttf",
-					"css/mui.min.css"
+					"css/mui.min.css",
+					"img/images2.jpg",
+					"js/template.js"
 				],
 				"refer": [
 					"chat.html"
@@ -213,7 +215,8 @@
 					"js/mui.min.js",
 					"js/jquery-1.8.0.min.js",
 					"fonts/mui.ttf",
-					"css/mui.min.css"
+					"css/mui.min.css",
+					"js/mui.previewimage.js"
 				],
 				"refer": [],
 				"priority": 0
