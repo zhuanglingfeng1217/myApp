@@ -6,6 +6,7 @@
 		<title></title>
 		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
 		<link href="css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="css/imageviewer.css" />
 		<style type="text/css">
 			* {
 				box-sizing: border-box;
@@ -62,10 +63,12 @@
 			
 			.head_img {
 				width: 15%;
+				height: 40px;
 			}
 			
 			.head_img>img {
 				width: 40px;
+				height: 40px;
 			}
 			
 			.left_text .head_img,
@@ -75,12 +78,25 @@
 			}
 			
 			.user_msg {
+				min-height: 40px;
+				border-radius: 5px;
 				max-width: 80%;
+				background-color: mediumspringgreen;
+				display: table;
+				padding: 10px;
+				position: relative;
+			}
+			
+			.user_msg span {
+				vertical-align: middle;
+				display: table-cell;
+				word-break: break-all;
 			}
 			
 			.right_text .head_img,
 			.right_text .user_msg {
 				float: right;
+				right: 15px;
 				/*text-align: right;*/
 			}
 			
@@ -92,6 +108,24 @@
 				background-repeat: no-repeat;
 				background-size: contain;
 				background-position: 0 4px;
+			}
+			
+			.user_msg>i {
+				width: 0;
+				height: 0;
+				border-top: 5px solid transparent;
+				border-bottom: 5px solid transparent;
+				position: absolute;
+				top: 15px;
+			}
+			
+			.right_text .user_msg>i {
+				border-left: 10px solid mediumspringgreen;
+				right: -10px;
+			}
+			.left_text .user_msg>i {
+				border-right: 10px solid mediumspringgreen;
+				left: -10px;
 			}
 		</style>
 	</head>
@@ -109,27 +143,29 @@
 
 			<input type="text" id="user_text" />
 			<div class="plus_box">
-				<span class="mui-icon mui-icon-plus add_file" style="font-size: 35px;"></span>
+				<a class="mui-icon mui-icon-plus add_file" id="openSheet" href="#sheet" style="font-size: 35px;color: inherit;"></a>
 				<span class="send" style="display: none;">发送</span>
 			</div>
 
 		</nav>
-		<div class="mui-content">
+		<div class="mui-content" >
 			<ul class="mui-table-view mui-clearfix msg_box">
 				<li class="left_text mui-clearfix">
 					<div class="head_img">
-						<img src="img/images2.jpg" />
+						<img src="img/images3.png" data-preview-src="" data-preview-group="1" />
 					</div>
 					<div class="user_msg">
-						<span>nihao李径独来数李径独来数李径独来数李径独来数李径独来数李径独来数</span>
+						<span>来数李径独来数</span>
+						<i></i>
 					</div>
 				</li>
-				<li class="right_text">
+				<li class="right_text mui-clearfix">
 					<div class="head_img">
-						<img src="img/images2.jpg" />
+						<img src="img/images2.jpg" data-preview-src="" data-preview-group="1" />
 					</div>
 					<div class="user_msg">
 						<span>nihao李径独来数李径独来数李径独来数李径独来数李径独来数李径独来数</span>
+						<i></i>
 					</div>
 				</li>
 				<!--<li class="right_text">
@@ -142,22 +178,44 @@
 				</li>-->
 			</ul>
 		</div>
+		<div id="sheet" class="mui-popover mui-popover-bottom mui-popover-action ">
+			<!-- 可选择菜单 -->
+			<ul class="mui-table-view">
+				<li class="mui-table-view-cell" id="openCamera">
+					<span>拍照</span>
+				</li>
+				<li class="mui-table-view-cell" id="openImg">
+					<span>相册</span>
+				</li>
+			</ul>
+			<!-- 取消菜单 -->
+			<!--<ul class="mui-table-view">
+		      <li class="mui-table-view-cell">
+		        <a href="#sheet1"><b>取消</b></a>
+		      </li>
+		    </ul>-->
+		</div>
+		<!--<a href="#sheet" id="openSheet" class="mui-btn mui-btn-primary mui-btn-block">打开操作表</a>-->
+
 		<script src="js/mui.min.js"></script>
+		<script src="js/mui.zoom.js" type="text/javascript" charset="utf-8"></script>
+		<script src="js/mui.previewimage.js" type="text/javascript" charset="utf-8"></script>
 		<script src="js/jquery-1.8.0.min.js" type="text/javascript" charset="utf-8"></script>
-		<!--<script src="js/mui.previewimage.js" type="text/javascript" charset="utf-8"></script>-->
 		<script src="js/template.js" type="text/javascript" charset="utf-8"></script>
 		<!--消息模板-->
-		<!--<script type="text/javascript" id="msgList">
+		<script type="text/javascript" id="msgList">
 			<li class="right_text">
 				<div class="head_img">
 					<img src="img/images2.jpg"/>
 				</div>
 				<div class="user_msg">
 					<span>{{msg}}</span>
+					<i></i>
 				</div>
 			</li>
-		</script>-->
+		</script>
 		<script type="text/javascript">
+			mui.previewImage();
 			mui.init({
 				gestureConfig: {
 					tap: true, //默认为true
@@ -225,8 +283,8 @@
 					r.stop();
 					mui.toast('停止录音');
 				});
-				/*打开相册或摄像头*/
-				$(".add_file").on('tap', function() {
+				/*打开摄像头*/
+				$("#openCamera").on('tap', function() {
 					var cmr = plus.camera.getCamera();
 					var res = cmr.supportedImageResolutions[0];
 					var fmt = cmr.supportedImageFormats[0];
@@ -245,6 +303,20 @@
 						resolution: res,
 						format: fmt
 					});
+				});
+				/*打开相册*/
+				$("#openImg").on('tap', function() {
+					console.log('openImg');
+					plus.gallery.pick(function(path) {
+						//						for(var i in e.files){
+						//							console.log(e.files[0]);
+						//						}
+						console.log(path);
+					}, function() {
+						console.log('取消选择照片');
+					}, {
+						filter: "image"
+					})
 				});
 			})
 			/*监听输入框*/

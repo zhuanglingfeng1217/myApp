@@ -217,7 +217,10 @@
 					"fonts/mui.ttf",
 					"css/mui.min.css",
 					"js/mui.previewimage.js",
-					"img/bg_record_icon.png"
+					"img/bg_record_icon.png",
+					"js/mui.zoom.js",
+					"img/images3.png",
+					"css/imageviewer.css"
 				],
 				"refer": [],
 				"priority": 0
@@ -226,7 +229,6 @@
 		"idle": {
 			"resources": [
 				"main.html",
-				"img/images3.png",
 				"js/mui.js",
 				"css/mui.css"
 			]
