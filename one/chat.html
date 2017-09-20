@@ -202,20 +202,65 @@
 		<script src="js/mui.previewimage.js" type="text/javascript" charset="utf-8"></script>
 		<script src="js/jquery-1.8.0.min.js" type="text/javascript" charset="utf-8"></script>
 		<script src="js/template.js" type="text/javascript" charset="utf-8"></script>
-		<!--消息模板-->
+		<!--纯文本模板-->
 		<script type="text/javascript" id="msgList">
-			<li class="right_text">
+			<li class="{{user}}">
 				<div class="head_img">
 					<img src="img/images2.jpg"/>
 				</div>
 				<div class="user_msg">
-					<span>{{msg}}</span>
+					<span>{{text}}</span>
 					<i></i>
 				</div>
 			</li>
 		</script>
+		<!--图像模板-->
+		<script type="text/javascript" id="imgList">
+			<li class="{{user}}">
+				<div class="head_img">
+					<img src="img/images2.jpg"/>
+				</div>
+				<div class="user_msg">
+					<img src={{url}} style="width:120px;height:120px;" data-preview-src="" data-preview-group="1" />
+					<i></i>
+				</div>
+			</li>
+		</script>
+		<!--录音模板-->
+		<script type="text/javascript" id="recordList">
+			<li class="{{user}}">
+				<div class="head_img">
+					<img src="img/images2.jpg"/>
+				</div>
+				<div class="user_msg">
+					<span class="playAudio" data-url={{url}}></span>
+				</div> 
+			</li>
+		</script>
+	
 		<script type="text/javascript">
 			mui.previewImage();
+			$(function(){
+//				localStorage.setItem('msgList','');
+//				var mList = [{recordList:[{url:'123',user:'right_text'}]},{textList:[{text:'111',user:'right_text'}]},{imgList:[{url:'img/images.jpg',user:'right_text'}]}];
+//				localStorage.setItem('msgList',JSON.stringify(mList));
+				var msgList = localStorage.getItem('msgList');
+				if(msgList){
+					msgList = JSON.parse(msgList);
+					for(var i=0;i<msgList[0].recordList.length;i++){
+						var html = template("recordList",msgList[0].recordList[i]);
+						$(".msg_box").append(html);
+					}
+					for(var i=0;i<msgList[1].textList.length;i++){
+						var html = template("msgList",msgList[1].textList[i]);
+						$(".msg_box").append(html);
+					}
+					for(var i=0;i<msgList[2].imgList.length;i++){
+						var html = template("imgList",msgList[2].imgList[i]);
+						$(".msg_box").append(html);
+					}
+				}
+			});
 			mui.init({
 				gestureConfig: {
 					tap: true, //默认为true
@@ -273,6 +318,19 @@
 								'</div>' +
 								'</li>'
 							$(".msg_box").append(li);
+							var recordList = [];
+							var msgList = localStorage.getItem('msgList');
+							if(msgList){
+								msgList = JSON.parse(msgList);
+								recordList = msgList[0].recordList;
+							}
+							var recordObj = {};
+							recordObj.url = p;
+							recordObj.user = 'text_right';
+							recordList.push(recordObj);
+							msgList.push(recordList);
+							msgList = JSON.stringify(msgList);
+							localStorage.setItem('msgList',msgList);
 						}, function(e) {
 							mui.alert('读取录音文件错误');
 						})
@@ -296,7 +354,22 @@
 						}, function(error) {
 							mui.alert(error.message);
 						});
-						$(".msg_box").append('<li><img width="55px" src="http://localhost:13131/' + p + '" data-preview-src="" data-preview-group="1" /></li>');
+						var data = {user:'right_text',url:"http://localhost:13131/"+p};
+						var html = template("imgList",data);
+						$(".msg_box").append(html);
+						var imgList = [];
+						var msgList = localStorage.getItem('msgList');
+						if(msgList){
+							msgList = JSON.parse(msgList);
+							imgList = msgList[2].imgList;
+						}
+						var imgObj = {};
+						imgObj.url = "http://localhost:13131/"+p;
+						imgObj.user = 'text_right';
+						imgList.push(imgObj);
+						msgList.push(imgList);
+						msgList = JSON.stringify(msgList);
+						localStorage.setItem('msgList',msgList);
 					}, function(error) {
 						mui.alert("Capture image failed: " + error.message);
 					}, {
@@ -307,15 +380,32 @@
 				/*打开相册*/
 				$("#openImg").on('tap', function() {
 					console.log('openImg');
-					plus.gallery.pick(function(path) {
-						//						for(var i in e.files){
-						//							console.log(e.files[0]);
-						//						}
+					var imgList = [];
+					var msgList = localStorage.getItem('msgList');
+					if(msgList){
+							msgList = JSON.parse(msgList);
+							imgList = msgList[2].imgList;
+						}
+					plus.gallery.pick(function(e) {
+						for(var i in e.files){
+							console.log(e.files[i]);
+							var data = {user:'right_text',url:e.files[i]};
+							var html = template("imgList",data);
+							$(".msg_box").append(html);
+							var imgObj = {};
+							imgObj.url = e.files[i];
+							imgObj.user = 'text_right';
+							imgList.push(imgObj);
+						}
+						msgList.push(imgList);
+						msgList = JSON.stringify(msgList);
+						localStorage.setItem('msgList',msgList);
 						console.log(path);
 					}, function() {
 						console.log('取消选择照片');
 					}, {
-						filter: "image"
+						filter: "image",
+						multiple:true,
 					})
 				});
 			})
@@ -333,10 +423,27 @@
 			$('.send').on('tap', function() {
 				var msg = $('#user_text').val();
 				var data = {
-					msg: msg
+					text: msg,
+					user:'right_text'
 				};
 				var html = template('msgList', data);
 				$('.msg_box').append(html);
+				var textList = [];
+//				var msgList = localStorage.getItem('msgList');
+//				if(msgList){
+//					msgList = JSON.parse(msgList);
+//					textList = msgList[1].textList;
+//				}else{
+//					msgList = [];
+//				}
+				var textObj = {};
+				textObj.text = msg;
+				textObj.user = 'text_right';
+				textList.push(textObj);
+				console.log(textList);
+//				msgList.push(textList);
+//				msgList = JSON.stringify(msgList);
+//				localStorage.setItem('msgList',msgList);
 				$('#user_text').val('');
 				$('.add_file').show();
 				$('.send').hide();

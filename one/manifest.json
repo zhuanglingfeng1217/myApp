@@ -220,7 +220,8 @@
 					"img/bg_record_icon.png",
 					"js/mui.zoom.js",
 					"img/images3.png",
-					"css/imageviewer.css"
+					"css/imageviewer.css",
+					"img/images.jpg"
 				],
 				"refer": [],
 				"priority": 0
