@@ -13,7 +13,9 @@
 				padding: 0;
 				margin: 0;
 			}
-			
+			.msg_box{
+				margin-top: 15px;
+			}
 			.right_icon {
 				float: right;
 			}
@@ -62,7 +64,7 @@
 			}
 			
 			.head_img {
-				width: 15%;
+				width: 40px;
 				height: 40px;
 			}
 			
@@ -75,6 +77,9 @@
 			.left_text .user_msg {
 				float: left;
 				/*text-align: left;*/
+			}
+			.left_text .user_msg{
+				margin-left: 10px;
 			}
 			
 			.user_msg {
@@ -96,7 +101,7 @@
 			.right_text .head_img,
 			.right_text .user_msg {
 				float: right;
-				right: 15px;
+				right: 10px;
 				/*text-align: right;*/
 			}
 			
@@ -149,7 +154,10 @@
 
 		</nav>
 		<div class="mui-content" >
-			<ul class="mui-table-view mui-clearfix msg_box">
+			<div class="mui-scroll-wrapper" style="top:44px;bottom: 67px;">
+			    <div class="mui-scroll">
+			        <!--这里放置真实显示的DOM内容-->
+			        <ul class="mui-table-view mui-clearfix msg_box">
 				<li class="left_text mui-clearfix">
 					<div class="head_img">
 						<img src="img/images3.png" data-preview-src="" data-preview-group="1" />
@@ -177,6 +185,10 @@
 					</div>
 				</li>-->
 			</ul>
+			    </div>
+			</div>
+			
+			
 		</div>
 		<div id="sheet" class="mui-popover mui-popover-bottom mui-popover-action ">
 			<!-- 可选择菜单 -->
@@ -204,7 +216,7 @@
 		<script src="js/template.js" type="text/javascript" charset="utf-8"></script>
 		<!--纯文本模板-->
 		<script type="text/javascript" id="msgList">
-			<li class="{{user}}">
+			<li class="{{user}} mui-clearfix">
 				<div class="head_img">
 					<img src="img/images2.jpg"/>
 				</div>
@@ -216,7 +228,7 @@
 		</script>
 		<!--图像模板-->
 		<script type="text/javascript" id="imgList">
-			<li class="{{user}}">
+			<li class="{{user}} mui-clearfix">
 				<div class="head_img">
 					<img src="img/images2.jpg"/>
 				</div>
@@ -228,7 +240,7 @@
 		</script>
 		<!--录音模板-->
 		<script type="text/javascript" id="recordList">
-			<li class="{{user}}">
+			<li class="{{user}} mui-clearfix">
 				<div class="head_img">
 					<img src="img/images2.jpg"/>
 				</div>
@@ -244,22 +256,27 @@
 //				localStorage.setItem('msgList','');
 //				var mList = [{recordList:[{url:'123',user:'right_text'}]},{textList:[{text:'111',user:'right_text'}]},{imgList:[{url:'img/images.jpg',user:'right_text'}]}];
 //				localStorage.setItem('msgList',JSON.stringify(mList));
+				/*初始化滚动区域*/
+				mui('.mui-scroll-wrapper').scroll({
+					deceleration: 0.0005 //flick 减速系数，系数越大，滚动速度越慢，滚动距离越小，默认值0.0006
+				});
 				var msgList = localStorage.getItem('msgList');
 				if(msgList){
 					msgList = JSON.parse(msgList);
-					for(var i=0;i<msgList[0].recordList.length;i++){
-						var html = template("recordList",msgList[0].recordList[i]);
+					for(var i=0;i<msgList.recordList.length;i++){
+						var html = template("recordList",msgList.recordList[i]);
 						$(".msg_box").append(html);
 					}
-					for(var i=0;i<msgList[1].textList.length;i++){
-						var html = template("msgList",msgList[1].textList[i]);
+					for(var i=0;i<msgList.textList.length;i++){
+						var html = template("msgList",msgList.textList[i]);
 						$(".msg_box").append(html);
 					}
-					for(var i=0;i<msgList[2].imgList.length;i++){
-						var html = template("imgList",msgList[2].imgList[i]);
+					for(var i=0;i<msgList.imgList.length;i++){
+						var html = template("imgList",msgList.imgList[i]);
 						$(".msg_box").append(html);
 					}
 				}
+				mui('.mui-scroll-wrapper').scroll().scrollToBottom(100);
 			});
 			mui.init({
 				gestureConfig: {
@@ -294,6 +311,9 @@
 				})
 			}
 			mui.plusReady(function() {
+				plus.webview.currentWebview().setStyle({
+					softinputMode:'adjustResize'
+				})
 				console.log(r);
 				/*长按录音 松开停止录音*/
 				$('.record').on('longtap', function(e) {
@@ -309,7 +329,7 @@
 						mui.toast('录音完成' + p);
 						plus.io.resolveLocalFileSystemURL(p, function(entry) {
 							mui.toast('读取文件成功');
-							var li = '<li class="right_text">' +
+							var li = '<li class="right_text mui-clearfix">' +
 								'<div class="head_img">' +
 								'<img src="img/images2.jpg"/>' +
 								'</div>' +
@@ -318,17 +338,16 @@
 								'</div>' +
 								'</li>'
 							$(".msg_box").append(li);
-							var recordList = [];
 							var msgList = localStorage.getItem('msgList');
 							if(msgList){
 								msgList = JSON.parse(msgList);
-								recordList = msgList[0].recordList;
+							}else{
+								msgList = {recordList:[],imgList:[],textList:[]};
 							}
 							var recordObj = {};
 							recordObj.url = p;
-							recordObj.user = 'text_right';
-							recordList.push(recordObj);
-							msgList.push(recordList);
+							recordObj.user = 'right_text';
+							msgList.recordList.push(recordObj);
 							msgList = JSON.stringify(msgList);
 							localStorage.setItem('msgList',msgList);
 						}, function(e) {
@@ -357,17 +376,16 @@
 						var data = {user:'right_text',url:"http://localhost:13131/"+p};
 						var html = template("imgList",data);
 						$(".msg_box").append(html);
-						var imgList = [];
 						var msgList = localStorage.getItem('msgList');
 						if(msgList){
 							msgList = JSON.parse(msgList);
-							imgList = msgList[2].imgList;
+						}else{
+							msgList = {recordList:[],imgList:[],textList:[]};
 						}
 						var imgObj = {};
 						imgObj.url = "http://localhost:13131/"+p;
-						imgObj.user = 'text_right';
-						imgList.push(imgObj);
-						msgList.push(imgList);
+						imgObj.user = 'right_text';
+						msgList.imgList.push(imgObj);
 						msgList = JSON.stringify(msgList);
 						localStorage.setItem('msgList',msgList);
 					}, function(error) {
@@ -380,12 +398,12 @@
 				/*打开相册*/
 				$("#openImg").on('tap', function() {
 					console.log('openImg');
-					var imgList = [];
 					var msgList = localStorage.getItem('msgList');
 					if(msgList){
-							msgList = JSON.parse(msgList);
-							imgList = msgList[2].imgList;
-						}
+						msgList = JSON.parse(msgList);
+					}else{
+						msgList = {recordList:[],imgList:[],textList:[]};
+					}
 					plus.gallery.pick(function(e) {
 						for(var i in e.files){
 							console.log(e.files[i]);
@@ -394,10 +412,9 @@
 							$(".msg_box").append(html);
 							var imgObj = {};
 							imgObj.url = e.files[i];
-							imgObj.user = 'text_right';
-							imgList.push(imgObj);
+							imgObj.user = 'right_text';
+							msgList.imgList.push(imgObj);
 						}
-						msgList.push(imgList);
 						msgList = JSON.stringify(msgList);
 						localStorage.setItem('msgList',msgList);
 						console.log(path);
@@ -428,26 +445,24 @@
 				};
 				var html = template('msgList', data);
 				$('.msg_box').append(html);
-				var textList = [];
-//				var msgList = localStorage.getItem('msgList');
-//				if(msgList){
-//					msgList = JSON.parse(msgList);
-//					textList = msgList[1].textList;
-//				}else{
-//					msgList = [];
-//				}
+				mui('.mui-scroll-wrapper').scroll().scrollToBottom(100);
+				var msgList = localStorage.getItem('msgList');
+				if(msgList){
+					msgList = JSON.parse(msgList);
+				}else{
+					msgList = {recordList:[],imgList:[],textList:[]};
+				}
 				var textObj = {};
 				textObj.text = msg;
-				textObj.user = 'text_right';
-				textList.push(textObj);
-				console.log(textList);
-//				msgList.push(textList);
-//				msgList = JSON.stringify(msgList);
-//				localStorage.setItem('msgList',msgList);
+				textObj.user = 'right_text';
+				msgList.textList.push(textObj);
+				msgList = JSON.stringify(msgList);
+				localStorage.setItem('msgList',msgList);
 				$('#user_text').val('');
 				$('.add_file').show();
 				$('.send').hide();
 			})
+			/**/
 		</script>
 	</body>
 
