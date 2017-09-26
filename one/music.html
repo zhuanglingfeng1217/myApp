@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Document</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+    <link rel="stylesheet" type="text/css" href="css/mui.css"/>
+</head>
+<body>
+    <header class="mui-bar mui-bar-nav">
+        <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+        <h1 class="mui-title">音乐</h1>
+    </header>
+   <div class="mui-content">
+       <div class="mui-scroll-wrapper">
+           <div class="mui-scroll">
+               <!--这里放置真实显示的DOM内容-->
+               <ul id="songList">
+               		<li></li>
+               </ul>
+           </div>
+       </div>
+       
+   </div>
+    <script src="js/mui.js" type="text/javascript" charset="utf-8"></script>
+    <script src="js/jquery-1.8.0.min.js" type="text/javascript" charset="utf-8"></script>
+    <script type="text/javascript">
+    mui.init()
+    $.ajax({
+    	type: "get",
+		async: false,
+		url: "http://music.qq.com/musicbox/shop/v3/data/hit/hit_newsong.js",
+		dataType: "jsonp",
+		jsonp: "callback",
+		jsonpCallback: "JsonCallback",
+		scriptCharset: 'GBK',//设置编码，否则会乱码
+		success: function(data) {
+//			var data = JSON.stringify(data);
+			console.log(data);
+			var songList = data.songlist;
+			console.log(songList);
+			for(var i=0;i<songList.length;i++){
+				var url = songList[i].url;
+				$("#songList").append('<audio src='+url+' controls></audio>');
+			}
+		},
+		error: function() {
+			alert('fail');
+		}
+    	
+    });
+    </script>
+</body>
+</html>

@@ -59,7 +59,7 @@
 								</ul>
 							</div>
 							<!--第二个内容区-->
-							<div class="mui-slider-item content_wrap">
+							<div class="mui-slider-item content_wrap go_music">
 								<!-- 具体内容 -->
 								<ul class="mui-table-view">
 									<li class="mui-table-view-cell mui-clearfix">
@@ -112,6 +112,13 @@
 					mui.openWindow({
 						url: 'chat.html',
 						id: 'chat.html',
+					})
+			})
+		/*跳转至音乐*/
+		$('body').on('tap', '.go_music', function() {
+					mui.openWindow({
+						url: 'music.html',
+						id: 'music.html',
 					})
 			})
 //					mui.plusReady(function() {

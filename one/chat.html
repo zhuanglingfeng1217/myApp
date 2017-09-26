@@ -147,6 +147,7 @@
 			</div>
 
 			<input type="text" id="user_text" />
+			<!--<button type="button" class="mui-btn mui-btn-grey">按住录音</button>-->
 			<div class="plus_box">
 				<a class="mui-icon mui-icon-plus add_file" id="openSheet" href="#sheet" style="font-size: 35px;color: inherit;"></a>
 				<span class="send" style="display: none;">发送</span>
@@ -253,7 +254,7 @@
 		<script type="text/javascript">
 			mui.previewImage();
 			$(function(){
-//				localStorage.setItem('msgList','');
+				localStorage.setItem('msgList','');
 //				var mList = [{recordList:[{url:'123',user:'right_text'}]},{textList:[{text:'111',user:'right_text'}]},{imgList:[{url:'img/images.jpg',user:'right_text'}]}];
 //				localStorage.setItem('msgList',JSON.stringify(mList));
 				/*初始化滚动区域*/
@@ -263,17 +264,17 @@
 				var msgList = localStorage.getItem('msgList');
 				if(msgList){
 					msgList = JSON.parse(msgList);
-					for(var i=0;i<msgList.recordList.length;i++){
-						var html = template("recordList",msgList.recordList[i]);
-						$(".msg_box").append(html);
-					}
-					for(var i=0;i<msgList.textList.length;i++){
-						var html = template("msgList",msgList.textList[i]);
-						$(".msg_box").append(html);
-					}
-					for(var i=0;i<msgList.imgList.length;i++){
-						var html = template("imgList",msgList.imgList[i]);
-						$(".msg_box").append(html);
+					for(var i=0;i<msgList.length;i++){
+						if(msgList[i].type=='record'){
+							var html = template("recordList",msgList[i]);
+							$(".msg_box").append(html);
+						}else if(msgList[i].type=='text'){
+							var html = template("msgList",msgList[i]);
+							$(".msg_box").append(html);
+						}else if(msgList[i].type=='img'){
+							var html = template("imgList",msgList.imgList[i]);
+							$(".msg_box").append(html);
+						}
 					}
 				}
 				mui('.mui-scroll-wrapper').scroll().scrollToBottom(100);
@@ -338,16 +339,12 @@
 								'</div>' +
 								'</li>'
 							$(".msg_box").append(li);
-							var msgList = localStorage.getItem('msgList');
-							if(msgList){
-								msgList = JSON.parse(msgList);
-							}else{
-								msgList = {recordList:[],imgList:[],textList:[]};
-							}
+							var msgList = getMsgList();
 							var recordObj = {};
 							recordObj.url = p;
 							recordObj.user = 'right_text';
-							msgList.recordList.push(recordObj);
+							recordObj.type = 'record';
+							msgList.push(recordObj);
 							msgList = JSON.stringify(msgList);
 							localStorage.setItem('msgList',msgList);
 						}, function(e) {
@@ -362,6 +359,7 @@
 				});
 				/*打开摄像头*/
 				$("#openCamera").on('tap', function() {
+					mui("#sheet").popover('hide');
 					var cmr = plus.camera.getCamera();
 					var res = cmr.supportedImageResolutions[0];
 					var fmt = cmr.supportedImageFormats[0];
@@ -376,16 +374,12 @@
 						var data = {user:'right_text',url:"http://localhost:13131/"+p};
 						var html = template("imgList",data);
 						$(".msg_box").append(html);
-						var msgList = localStorage.getItem('msgList');
-						if(msgList){
-							msgList = JSON.parse(msgList);
-						}else{
-							msgList = {recordList:[],imgList:[],textList:[]};
-						}
+						var msgList = getMsgList();
 						var imgObj = {};
 						imgObj.url = "http://localhost:13131/"+p;
 						imgObj.user = 'right_text';
-						msgList.imgList.push(imgObj);
+						imgObj.type = 'img';
+						msgList.push(imgObj);
 						msgList = JSON.stringify(msgList);
 						localStorage.setItem('msgList',msgList);
 					}, function(error) {
@@ -397,13 +391,9 @@
 				});
 				/*打开相册*/
 				$("#openImg").on('tap', function() {
+					mui("#sheet").popover('hide');
 					console.log('openImg');
-					var msgList = localStorage.getItem('msgList');
-					if(msgList){
-						msgList = JSON.parse(msgList);
-					}else{
-						msgList = {recordList:[],imgList:[],textList:[]};
-					}
+					var msgList = getMsgList();
 					plus.gallery.pick(function(e) {
 						for(var i in e.files){
 							console.log(e.files[i]);
@@ -413,11 +403,11 @@
 							var imgObj = {};
 							imgObj.url = e.files[i];
 							imgObj.user = 'right_text';
-							msgList.imgList.push(imgObj);
+							imgObj.type = 'img';
+							msgList.push(imgObj);
 						}
 						msgList = JSON.stringify(msgList);
 						localStorage.setItem('msgList',msgList);
-						console.log(path);
 					}, function() {
 						console.log('取消选择照片');
 					}, {
@@ -445,24 +435,31 @@
 				};
 				var html = template('msgList', data);
 				$('.msg_box').append(html);
+				/*滚动到底部*/
 				mui('.mui-scroll-wrapper').scroll().scrollToBottom(100);
-				var msgList = localStorage.getItem('msgList');
-				if(msgList){
-					msgList = JSON.parse(msgList);
-				}else{
-					msgList = {recordList:[],imgList:[],textList:[]};
-				}
+				var msgList = getMsgList();
+				console.log(msgList);
 				var textObj = {};
 				textObj.text = msg;
 				textObj.user = 'right_text';
-				msgList.textList.push(textObj);
+				textObj.type = 'text';
+				msgList.push(textObj);
 				msgList = JSON.stringify(msgList);
 				localStorage.setItem('msgList',msgList);
 				$('#user_text').val('');
 				$('.add_file').show();
 				$('.send').hide();
 			})
-			/**/
+			/*获取本地存储的信息*/
+			function getMsgList(){
+				var msgList = localStorage.getItem('msgList');
+				if(msgList){
+					msgList = JSON.parse(msgList);
+				}else{
+					msgList = [];
+				} 
+				return msgList;
+			}
 		</script>
 	</body>
 
